@@ -2,6 +2,7 @@ from loguru import logger
 from torch.utils.data import DataLoader
 from torch import nn
 import torch
+import tiktoken
 from sacrebleu.metrics import BLEU, CHRF
 from src.utils import averager, create_masks
 
@@ -11,7 +12,7 @@ def do_epoch(
     model: nn.Module,
     loader: DataLoader,
     criterion: nn.Module,
-    tokenizer,
+    tokenizer: tiktoken.Encoding,
     optimizer=None,
 ):
     """Run a single epoch, either in training or evaluation mode, if `optimizer` is None."""
@@ -34,18 +35,15 @@ def do_epoch(
                 tgt_input,
                 #    src_mask=src_mask, tgt_mask=tgt_mask,
             )
-            print("prediction", prediction.shape)
-            print("tgt_output", tgt_output.shape)
+
             loss = criterion(prediction.reshape(-1, prediction.size(-1)), tgt_output.reshape(-1))
             pred_tokens = prediction.argmax(dim=-1)
-            references = [
-                [tokenizer.decode(ref.tolist(), skip_special_tokens=True).split()]
-                for ref in tgt_output
-            ]
-            hypotheses = [
-                tokenizer.decode(hyp.tolist(), skip_special_tokens=True).split()
-                for hyp in pred_tokens
-            ]
+            decoded_references = [tokenizer.decode(ref.tolist()).split() for ref in tgt_output]
+            decoded_hypotheses = [tokenizer.decode(hyp.tolist()).split() for hyp in pred_tokens]
+            references = [" ".join(ref) for ref in decoded_references]
+            hypotheses = [" ".join(hyp) for hyp in decoded_hypotheses]
+
+            print("references", references)
             score = bleu.corpus_score(hypotheses=hypotheses, references=references)
             chrf_score = chrf.corpus_score(hypotheses=hypotheses, references=references)
 
@@ -61,6 +59,6 @@ def do_epoch(
     logger.info(
         f"Epoch {epoch:03d} {label: <5} summary "
         f"loss: {metrics['loss']:.3f}, "
-        f"acc.: {metrics['accuracy']:6.2%}"
+        f"acc.: {metrics['bleu']:6.2%}"
     )
     return metrics

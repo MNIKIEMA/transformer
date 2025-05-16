@@ -22,20 +22,26 @@ class MultiHeadAttention(nn.Module):
         value: torch.Tensor,
         mask: Optional[torch.Tensor] = None,
     ):
-        B, T, D = query.size()
+        B, T_q, D = query.size()
+        _, T_k, _ = key.size()
+        _, T_v, _ = value.size()
 
         # Linear projections
         print(f"query shape: {query.shape} key shape: {key.shape} value shape: {value.shape}")
         Q = (
-            self.W_q(query).view(B, T, self.n_heads, self.d_head).transpose(1, 2)
-        )  # [B, H, T, d_head]
-        K = self.W_k(key).view(B, T, self.n_heads, self.d_head).transpose(1, 2)
-        V = self.W_v(value).view(B, T, self.n_heads, self.d_head).transpose(1, 2)
+            self.W_q(query).view(B, T_q, self.n_heads, self.d_head).transpose(1, 2)
+        )  # [B, H, T_q, d_head]
+        K = (
+            self.W_k(key).view(B, T_k, self.n_heads, self.d_head).transpose(1, 2)
+        )  # [B, H, T_k, d_head]
+        V = (
+            self.W_v(value).view(B, T_v, self.n_heads, self.d_head).transpose(1, 2)
+        )  # [B, H, T_v, d_head]
 
-        scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_head)
+        scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_head)  # [B, H, T_q, T_k]
         if mask is not None:
             scores = scores.masked_fill(mask == 0, float("-inf"))
         attn_weights = torch.softmax(scores, dim=-1)
-        context = torch.matmul(attn_weights, V)  # [B, H, T, d_head]
-        context = context.transpose(1, 2).contiguous().view(B, T, D)  # [B, T, D]
+        context = torch.matmul(attn_weights, V)  # [B, H, T_q, d_head]
+        context = context.transpose(1, 2).contiguous().view(B, T_q, D)  # [B, T_q, D]
         return self.out_proj(context)

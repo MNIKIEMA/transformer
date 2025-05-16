@@ -34,5 +34,6 @@ class Transformer(nn.Module):
 
     def forward(self, src, tgt, src_mask=None, tgt_mask=None):
         encoder_output = self.encoder(src, src_mask)
+        print("encoder output shape", encoder_output.shape)
         decoder_output = self.decoder(tgt, encoder_output, src_mask, tgt_mask)
         return self.out_proj(decoder_output)

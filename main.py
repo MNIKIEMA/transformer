@@ -53,6 +53,11 @@ def main():
         val_loss = do_epoch(
             model=model, criterion=criterion, loader=val_loader, tokenizer=tokenizer, epoch=epoch
         )
+        print(train_loss)
         print(
-            f"Epoch {epoch + 1} / {epochs}: Train loss {train_loss:.4f} | Val loss {val_loss:.4f}"
+            f"Epoch {epoch + 1} / {epochs}: Train loss [{train_loss['loss']:.4f}] | Val loss {val_loss['loss']:.4f}"
         )
+
+
+if __name__ == "__main__":
+    main()
