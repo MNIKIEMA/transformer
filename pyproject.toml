@@ -1,0 +1,30 @@
+[project]
+name = "transformer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "torch>=2.3.0",
+    "jupyterlab>=4.0",
+    "tiktoken>=0.5.1",
+    "matplotlib>=3.7.1",
+    "tqdm>=4.66.1",
+    "numpy>=1.26,<2.1",
+    "pandas>=2.2.1",
+    "pip>=25.0.1",
+    "datasets>=3.6.0",
+    "loguru>=0.7.3",
+    "sacrebleu>=2.5.1",
+]
+
+[tool.uv.sources]
+llms-from-scratch = { workspace = true }
+torch = [
+  { index = "pytorch-cu128", marker = "sys_platform == 'linux'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
