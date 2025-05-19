@@ -1,8 +1,8 @@
 import torch
-
+from tokenizers import Tokenizer, Encoding
 
 class Multi30kDataset(torch.utils.data.Dataset):
-    def __init__(self, hf_dataset, tokenizer, max_len=50):
+    def __init__(self, hf_dataset, tokenizer: Tokenizer, max_len=50):
         self.dataset = hf_dataset
         self.tokenizer = tokenizer
         self.max_len = max_len
@@ -13,15 +13,15 @@ class Multi30kDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         src_text = self.dataset[idx]["en"]
         tgt_text = self.dataset[idx]["de"]
-        src_tokens = self.tokenizer.encode(src_text)[: self.max_len]
-        tgt_tokens = self.tokenizer.encode(tgt_text)[: self.max_len]
+        src_tokens: Encoding = self.tokenizer.encode(src_text).ids[: self.max_len]
+        tgt_tokens: Encoding = self.tokenizer.encode(tgt_text).ids[: self.max_len]
         return {
             "src": torch.tensor(src_tokens, dtype=torch.long),
             "tgt": torch.tensor(tgt_tokens, dtype=torch.long),
         }
 
 
-def collate_fn(batch):
+def collate_fn(batch) -> tuple[torch.Tensor, torch.Tensor]:
     def pad_sequence(seqs, pad_id: int = 0):
         max_len = max(seq.size(0) for seq in seqs)
         return torch.stack(

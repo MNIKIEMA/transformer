@@ -1,4 +1,5 @@
-import tiktoken
+from loguru import logger
+from tokenizers import Tokenizer
 import torch
 from torch.utils.data import DataLoader
 from torch import nn
@@ -10,7 +11,7 @@ from src.train import do_epoch
 
 def main():
     device = torch.device("cpu" if torch.cuda.is_available() else "cpu")
-    tokenizer = tiktoken.get_encoding("gpt2")
+    tokenizer: Tokenizer = Tokenizer.from_pretrained("openai-community/gpt2")
 
     # Load datasets
     train_ds = load_dataset("bentrevett/multi30k", split="train").take(10)  # type: ignore
@@ -25,7 +26,7 @@ def main():
     val_loader = DataLoader(val_dataset, batch_size=2, shuffle=False, collate_fn=collate_fn)
 
     # Model
-    vocab_size = tokenizer.n_vocab
+    vocab_size = tokenizer.get_vocab_size()
     model = Transformer(
         enc_vocab_size=vocab_size,
         dec_vocab_size=vocab_size,
@@ -53,8 +54,8 @@ def main():
         val_loss = do_epoch(
             model=model, criterion=criterion, loader=val_loader, tokenizer=tokenizer, epoch=epoch
         )
-        print(train_loss)
-        print(
+
+        logger.info(
             f"Epoch {epoch + 1} / {epochs}: Train loss [{train_loss['loss']:.4f}] | Val loss {val_loss['loss']:.4f}"
         )
 

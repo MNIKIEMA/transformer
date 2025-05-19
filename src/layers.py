@@ -78,7 +78,6 @@ class DecoderLayer(nn.Module):
         x = self.dropout(x)
         x = self.norm1(x + _x)
         _x = x
-        print("x shape", x.shape, "encoder_output shape", encoder_output.shape)
         x = self.mha2(x, encoder_output, encoder_output, src_mask)
         x = self.dropout(x)
         x = self.norm2(x + _x)

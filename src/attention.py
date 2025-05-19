@@ -27,7 +27,6 @@ class MultiHeadAttention(nn.Module):
         _, T_v, _ = value.size()
 
         # Linear projections
-        print(f"query shape: {query.shape} key shape: {key.shape} value shape: {value.shape}")
         Q = (
             self.W_q(query).view(B, T_q, self.n_heads, self.d_head).transpose(1, 2)
         )  # [B, H, T_q, d_head]
