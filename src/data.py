@@ -1,6 +1,7 @@
 import torch
 from tokenizers import Tokenizer, Encoding
 
+
 class Multi30kDataset(torch.utils.data.Dataset):
     def __init__(self, hf_dataset, tokenizer: Tokenizer, max_len=50):
         self.dataset = hf_dataset

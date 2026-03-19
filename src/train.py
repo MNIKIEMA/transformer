@@ -24,7 +24,6 @@ def do_epoch(
     chrf = CHRF()
 
     for src, tgt in loader:
- 
         src, tgt = src.to(device), tgt.to(device)
         tgt_input = tgt[:, :-1]
         tgt_output = tgt[:, 1:]
@@ -33,12 +32,15 @@ def do_epoch(
             prediction = model(
                 src,
                 tgt_input,
-                   src_mask=src_mask, tgt_mask=tgt_mask,
+                src_mask=src_mask,
+                tgt_mask=tgt_mask,
             )
 
             loss = criterion(prediction.reshape(-1, prediction.size(-1)), tgt_output.reshape(-1))
             pred_tokens = prediction.argmax(dim=-1)
-            decoded_references: list[str] = [tokenizer.decode(ref.tolist()).split() for ref in tgt_output]
+            decoded_references: list[str] = [
+                tokenizer.decode(ref.tolist()).split() for ref in tgt_output
+            ]
             decoded_hypotheses = [tokenizer.decode(hyp.tolist()).split() for hyp in pred_tokens]
             references = [ref for ref in decoded_references]
             hypotheses = [" ".join(hyp) for hyp in decoded_hypotheses]
