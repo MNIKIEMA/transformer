@@ -4,7 +4,7 @@ from typing import Optional
 import torch
 import torch.nn as nn
 
-from utils import apply_rope
+from src.utils import apply_rope
 
 
 class MultiHeadAttention(nn.Module):

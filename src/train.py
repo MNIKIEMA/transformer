@@ -1,9 +1,10 @@
-from loguru import logger
-from torch.utils.data import DataLoader
-from torch import nn
-from tokenizers import Tokenizer
 import torch
+from loguru import logger
 from sacrebleu.metrics import BLEU, CHRF
+from tokenizers import Tokenizer
+from torch import nn
+from torch.utils.data import DataLoader
+
 from src.utils import averager, create_masks
 
 

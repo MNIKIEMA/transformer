@@ -1,12 +1,13 @@
+import torch
+from datasets import load_dataset
 from loguru import logger
 from tokenizers import Tokenizer
-import torch
-from torch.utils.data import DataLoader
 from torch import nn
-from datasets import load_dataset
+from torch.utils.data import DataLoader
+
 from src.data import Multi30kDataset, collate_fn
-from src.transformer import Transformer
 from src.train import do_epoch
+from src.transformer import Transformer
 
 
 def main():
