@@ -1,13 +1,15 @@
 import math
+from typing import Optional
+
 import torch
 import torch.nn as nn
-from typing import Optional
+
 from utils import apply_rope
 
 
 class MultiHeadAttention(nn.Module):
     def __init__(self, n_heads: int, d_model: int):
-        super(MultiHeadAttention, self).__init__()
+        super().__init__()
         assert d_model % n_heads == 0, "d_model must be divisible by n_heads"
         self.n_heads = n_heads
         self.d_head = d_model // n_heads
@@ -49,7 +51,7 @@ class MultiHeadAttention(nn.Module):
 
 class RoMultiHeadAttention(nn.Module):
     def __init__(self, n_heads: int, d_model: int):
-        super(RoMultiHeadAttention, self).__init__()
+        super().__init__()
         assert d_model % n_heads == 0, "d_model must be divisible by n_heads"
         self.n_heads = n_heads
         self.d_head = d_model // n_heads

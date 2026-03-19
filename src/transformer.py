@@ -1,5 +1,6 @@
 import torch.nn as nn
-from src.layers import Encoder, Decoder
+
+from src.layers import Decoder, Encoder
 
 
 class Transformer(nn.Module):
@@ -13,7 +14,7 @@ class Transformer(nn.Module):
         num_layers: int,
         dropout: float = 0.1,
     ):
-        super(Transformer, self).__init__()
+        super().__init__()
         self.encoder = Encoder(
             vocab_size=enc_vocab_size,
             d_model=d_model,

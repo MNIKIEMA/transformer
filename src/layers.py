@@ -1,13 +1,15 @@
-from typing import Optional
 import math
+from typing import Optional
+
 import torch
 import torch.nn as nn
+
 from src.attention import MultiHeadAttention
 
 
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model, max_len=5000):
-        super(PositionalEncoding, self).__init__()
+        super().__init__()
         self.d_model = d_model
         pe = torch.zeros(max_len, d_model)
         position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
@@ -23,7 +25,7 @@ class PositionalEncoding(nn.Module):
 
 class FFN(nn.Module):
     def __init__(self, d_model: int, d_ffn: int, dropout: float = 0.1):
-        super(FFN, self).__init__()
+        super().__init__()
         self.linear = nn.Sequential(
             nn.Linear(d_model, d_ffn),
             nn.Dropout(dropout),
@@ -38,7 +40,7 @@ class FFN(nn.Module):
 
 class EncoderLayer(nn.Module):
     def __init__(self, d_model: int, n_heads: int, d_ffn: int, dropout: float = 0.1):
-        super(EncoderLayer, self).__init__()
+        super().__init__()
         self.mha = MultiHeadAttention(n_heads, d_model)
         self.ffn = FFN(d_model, d_ffn, dropout)
         self.norm1 = nn.LayerNorm(d_model)
@@ -57,7 +59,7 @@ class EncoderLayer(nn.Module):
 
 class DecoderLayer(nn.Module):
     def __init__(self, d_model, n_heads, d_ffn, dropout=0.1):
-        super(DecoderLayer, self).__init__()
+        super().__init__()
         self.mha1 = MultiHeadAttention(n_heads, d_model)
         self.mha2 = MultiHeadAttention(n_heads, d_model)
         self.ffn = FFN(d_model, d_ffn, dropout)
@@ -98,7 +100,7 @@ class Encoder(nn.Module):
         num_layers: int,
         dropout: float = 0.1,
     ):
-        super(Encoder, self).__init__()
+        super().__init__()
         self.token_embd = nn.Embedding(vocab_size, d_model)
         self.embd = PositionalEncoding(d_model)
         self.layers = nn.ModuleList(
@@ -125,7 +127,7 @@ class Decoder(nn.Module):
         num_layers: int,
         dropout: float = 0.1,
     ):
-        super(Decoder, self).__init__()
+        super().__init__()
         self.token_embd = nn.Embedding(vocab_size, d_model)
         self.embd = PositionalEncoding(d_model)
         self.dropout = nn.Dropout(dropout)
